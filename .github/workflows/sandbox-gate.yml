@@ -18,13 +18,6 @@ jobs:
           path: trusted
           fetch-depth: 0
           persist-credentials: false
-      - name: Checkout candidate for comparison (never execute its scripts)
-        if: github.event_name == 'pull_request'
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          path: candidate
-          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
