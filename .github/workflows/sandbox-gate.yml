@@ -11,15 +11,28 @@ jobs:
   synthetic-governance:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout trusted base
+        uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          path: trusted
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: node scripts/selftest.js
-      - name: Gate PR changes
+      - name: Trusted validator self-tests
+        working-directory: trusted
+        run: node scripts/selftest.js
+      - name: Fetch candidate commit as data only
         if: github.event_name == 'pull_request'
+        working-directory: trusted
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: git fetch --no-tags origin "$HEAD_SHA"
+      - name: Gate pull request with trusted base validator
+        if: github.event_name == 'pull_request'
+        working-directory: trusted
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
