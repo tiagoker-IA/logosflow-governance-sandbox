@@ -2,4 +2,4 @@
 
 status: synthetic-approved
 
-Alterações exigem registro de encerramento, além de revisão de PR.
+Alteração normativa sintética acompanhada de registro de encerramento.
